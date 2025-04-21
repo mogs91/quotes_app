@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+
+{% block title %}Add New Quote{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h1>Add New Quote</h1>
+    
+    <form method="POST" action="{{ url_for('main.add_quote') }}">
+        <div class="form-group">
+            <label for="text">Quote Text:</label>
+            <textarea 
+                id="text" 
+                name="text" 
+                required 
+                maxlength="500"
+                placeholder="Enter the quote text"
+            ></textarea>
+            <small>Maximum 500 characters</small>
+        </div>
+        
+        <div class="form-group">
+            <label for="author">Author:</label>
+            <input 
+                type="text" 
+                id="author" 
+                name="author" 
+                required 
+                maxlength="100"
+                placeholder="Enter the author's name"
+            >
+            <small>Maximum 100 characters</small>
+        </div>
+        
+        <div class="form-group">
+            <label for="category">Category:</label>
+            <select id="category" name="category" required>
+                <option value="" disabled selected>Select a category</option>
+                <option value="Motivation">Motivation</option>
+                <option value="Funny">Funny</option>
+                <option value="Tech">Tech</option>
+                <option value="Life">Life</option>
+                <option value="Success">Success</option>
+                <option value="Wisdom">Wisdom</option>
+            </select>
+        </div>
+        
+        <div class="form-actions">
+            <button type="submit" class="button">Add Quote</button>
+            <a href="{{ url_for('main.home') }}" class="button secondary">Back to Home</a>
+        </div>
+    </form>
+</div>
+{% endblock %}

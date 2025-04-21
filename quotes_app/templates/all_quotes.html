@@ -1,0 +1,292 @@
+{% extends "base.html" %}
+
+{% block title %}All Quotes{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h1>All Quotes</h1>
+    
+    <div class="filter-and-sort">
+        <form method="GET" action="{{ url_for('main.view_all_quotes') }}" class="filter-form">
+            <div class="filter-section">
+                <label for="category_filter">Category:</label>
+                <select id="category_filter" name="category" onchange="this.form.submit()">
+                    <option value="all" {% if selected_category == 'all' %}selected{% endif %}>All Categories</option>
+                    {% for category in categories %}
+                        <option value="{{ category }}" {% if selected_category == category %}selected{% endif %}>{{ category }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            
+            <div class="sort-section">
+                <label for="sort_by">Sort by:</label>
+                <select id="sort_by" name="sort" onchange="this.form.submit()">
+                    <option value="id" {% if sort_by == 'id' %}selected{% endif %}>Added Date</option>
+                    <option value="author" {% if sort_by == 'author' %}selected{% endif %}>Author</option>
+                    <option value="rating" {% if sort_by == 'rating' %}selected{% endif %}>Rating</option>
+                </select>
+                
+                <select id="sort_order" name="order" onchange="this.form.submit()">
+                    <option value="asc" {% if sort_order == 'asc' %}selected{% endif %}>Ascending</option>
+                    <option value="desc" {% if sort_order == 'desc' %}selected{% endif %}>Descending</option>
+                </select>
+            </div>
+            
+            <input type="hidden" name="page" value="{{ pagination.page }}">
+            <input type="hidden" name="per_page" value="{{ pagination.per_page }}">
+        </form>
+    </div>
+    
+    <div class="quotes-list">
+        {% if quotes %}
+            {% for quote in quotes %}
+                <div class="quote-card" id="quote-{{ quote.id }}">
+                    <blockquote>
+                        <p>{{ quote.text }}</p>
+                        <footer>— <cite>{{ quote.author }}</cite></footer>
+                    </blockquote>
+                    
+                    <div class="quote-details">
+                        <span class="quote-category">{{ quote.category }}</span>
+                        
+                        <div class="quote-rating">
+                            <span class="rating-value">Rating: {{ quote.rating|default(0, true) }}</span>
+                            <div class="rating-stars" data-quote-id="{{ quote.id }}">
+                                {% for i in range(1, 6) %}
+                                    <span class="star {% if quote.rating and i <= quote.rating %}active{% endif %}" 
+                                          data-value="{{ i }}" 
+                                          onclick="rateQuote({{ quote.id }}, {{ i }})">★</span>
+                                {% endfor %}
+                            </div>
+                        </div>
+                        
+                        <div class="quote-actions">
+                            <div class="share-buttons">
+                                <button class="share-btn" onclick="shareQuote('{{ quote.text|e }}', '{{ quote.author|e }}')">
+                                    <i class="share-icon">↗</i> Share
+                                </button>
+                                <div class="share-dropdown">
+                                    <a href="https://twitter.com/intent/tweet?text={{ (quote.text ~ ' — ' ~ quote.author)|urlencode }}" 
+                                       target="_blank" rel="noopener" class="twitter-share">
+                                        Twitter
+                                    </a>
+                                    <a href="https://www.facebook.com/sharer/sharer.php?u={{ request.url|urlencode }}&quote={{ (quote.text ~ ' — ' ~ quote.author)|urlencode }}" 
+                                       target="_blank" rel="noopener" class="facebook-share">
+                                        Facebook
+                                    </a>
+                                    <a href="mailto:?subject=Check out this quote&body={{ (quote.text ~ ' — ' ~ quote.author)|urlencode }}" 
+                                       class="email-share">
+                                        Email
+                                    </a>
+                                    <button onclick="copyToClipboard('{{ quote.text|e }} — {{ quote.author|e }}')" class="copy-share">
+                                        Copy to Clipboard
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        {% else %}
+            <div class="no-quotes">
+                <p>No quotes found matching your criteria.</p>
+            </div>
+        {% endif %}
+    </div>
+    
+    {% if quotes and pagination.total_pages > 1 %}
+        <div class="pagination">
+            <div class="pagination-info">
+                Showing {{ (pagination.page - 1) * pagination.per_page + 1 }} - 
+                {% if pagination.page * pagination.per_page > pagination.total_quotes %}
+                    {{ pagination.total_quotes }}
+                {% else %}
+                    {{ pagination.page * pagination.per_page }}
+                {% endif %}
+                of {{ pagination.total_quotes }} quotes
+            </div>
+            
+            <div class="pagination-controls">
+                {% if pagination.has_prev %}
+                    <a href="{{ url_for('main.view_all_quotes', page=pagination.prev_page, per_page=pagination.per_page, 
+                                        category=selected_category, sort=sort_by, order=sort_order) }}" 
+                       class="pagination-link">&laquo; Previous</a>
+                {% else %}
+                    <span class="pagination-link disabled">&laquo; Previous</span>
+                {% endif %}
+                
+                {# Calculate page range for pagination links #}
+                {% set start_page = pagination.page - 2 if pagination.page - 2 > 0 else 1 %}
+                {% set end_page = pagination.page + 2 if pagination.page + 2 < pagination.total_pages else pagination.total_pages %}
+                
+                {% for p in range(start_page, end_page + 1) %}
+                    {% if p == pagination.page %}
+                        <span class="pagination-link current">{{ p }}</span>
+                    {% else %}
+                        <a href="{{ url_for('main.view_all_quotes', page=p, per_page=pagination.per_page, 
+                                            category=selected_category, sort=sort_by, order=sort_order) }}" 
+                           class="pagination-link">{{ p }}</a>
+                    {% endif %}
+                {% endfor %}
+                
+                {% if pagination.has_next %}
+                    <a href="{{ url_for('main.view_all_quotes', page=pagination.next_page, per_page=pagination.per_page, 
+                                        category=selected_category, sort=sort_by, order=sort_order) }}" 
+                       class="pagination-link">Next &raquo;</a>
+                {% else %}
+                    <span class="pagination-link disabled">Next &raquo;</span>
+                {% endif %}
+            </div>
+            
+            <div class="per-page-controls">
+                <label for="per_page">Quotes per page:</label>
+                <select id="per_page" onchange="changePerPage(this.value)">
+                    {% for n in [5, 10, 25, 50] %}
+                        <option value="{{ n }}" {% if pagination.per_page == n %}selected{% endif %}>{{ n }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+        </div>
+    {% endif %}
+    
+    <div class="actions">
+        <a href="{{ url_for('main.home') }}" class="button">Back to Home</a>
+        <a href="{{ url_for('main.add_quote') }}" class="button">Add Quote</a>
+    </div>
+</div>
+
+<script src="{{ url_for('static', filename='js/quotes.js') }}"></script>
+<script>
+    // Per page change handler
+    function changePerPage(value) {
+        const url = new URL(window.location);
+        url.searchParams.set('per_page', value);
+        url.searchParams.set('page', 1); // Reset to page 1 when changing items per page
+        window.location = url.toString();
+    }
+    
+    // Add a link to the home page
+    document.addEventListener('DOMContentLoaded', function() {
+        // Add an "All Quotes" link to the navigation
+        const nav = document.querySelector('.actions');
+        if (nav) {
+            const homeLink = nav.querySelector('a[href*="home"]');
+            if (homeLink) {
+                const allQuotesLink = document.createElement('a');
+                allQuotesLink.href = '{{ url_for("main.view_all_quotes") }}';
+                allQuotesLink.className = 'button';
+                allQuotesLink.textContent = 'View All Quotes';
+                nav.insertBefore(allQuotesLink, homeLink.nextSibling);
+            }
+        }
+    });
+    
+    // If the quotes.js script doesn't yet contain these functions
+    if (typeof shareQuote !== 'function') {
+        function shareQuote(text, author) {
+            const shareDropdown = event.currentTarget.nextElementSibling;
+            
+            if (shareDropdown.style.display === 'block') {
+                shareDropdown.style.display = 'none';
+            } else {
+                // Close any open dropdowns
+                document.querySelectorAll('.share-dropdown').forEach(dropdown => {
+                    dropdown.style.display = 'none';
+                });
+                
+                shareDropdown.style.display = 'block';
+            }
+            
+            // Close when clicking outside
+            document.addEventListener('click', function closeDropdown(e) {
+                if (!e.target.closest('.share-buttons')) {
+                    shareDropdown.style.display = 'none';
+                    document.removeEventListener('click', closeDropdown);
+                }
+            });
+            
+            // Prevent event from bubbling
+            event.stopPropagation();
+        }
+    }
+    
+    if (typeof copyToClipboard !== 'function') {
+        function copyToClipboard(text) {
+            navigator.clipboard.writeText(text).then(() => {
+                showNotification('Quote copied to clipboard!', 'success');
+            }).catch(err => {
+                console.error('Could not copy text: ', err);
+                showNotification('Failed to copy quote', 'error');
+            });
+        }
+    }
+    
+    if (typeof rateQuote !== 'function') {
+        function rateQuote(quoteId, rating) {
+            fetch('/api/rate_quote', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    quote_id: quoteId,
+                    rating: rating
+                }),
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === 'success') {
+                    // Update UI
+                    const ratingElement = document.querySelector(`#quote-${quoteId} .rating-value`);
+                    if (ratingElement) {
+                        ratingElement.textContent = `Rating: ${data.new_rating}`;
+                    }
+                    
+                    // Update stars
+                    const stars = document.querySelectorAll(`#quote-${quoteId} .star`);
+                    stars.forEach((star, index) => {
+                        if (index < rating) {
+                            star.classList.add('active');
+                        } else {
+                            star.classList.remove('active');
+                        }
+                    });
+                    
+                    // Show success message
+                    showNotification('Rating saved!', 'success');
+                } else {
+                    // Show error message
+                    showNotification(data.message, 'error');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                showNotification('Failed to save rating. Please try again.', 'error');
+            });
+        }
+    }
+    
+    if (typeof showNotification !== 'function') {
+        function showNotification(message, type = 'info') {
+            const notification = document.createElement('div');
+            notification.className = `notification ${type}`;
+            notification.textContent = message;
+            
+            document.body.appendChild(notification);
+            
+            // Fade in
+            setTimeout(() => {
+                notification.classList.add('show');
+            }, 10);
+            
+            // Fade out and remove
+            setTimeout(() => {
+                notification.classList.remove('show');
+                setTimeout(() => {
+                    notification.remove();
+                }, 300);
+            }, 3000);
+        }
+    }
+</script>
+{% endblock %}

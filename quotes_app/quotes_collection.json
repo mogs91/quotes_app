@@ -1,0 +1,127 @@
+{
+    "quotes": [
+        {
+            "text": "Creativity is intelligence having fun.",
+            "author": "Albert Einstein",
+            "category": "Wisdom"
+        },
+        {
+            "text": "You can't use up creativity. The more you use, the more you have.",
+            "author": "Maya Angelou",
+            "category": "Motivation"
+        },
+        {
+            "text": "Start where you are. Use what you have. Do what you can.",
+            "author": "Albert Einstein",
+            "category": "Motivation"
+        },
+        {
+            "text": "The best way to predict the future is to invent it.",
+            "author": "Alan Kay",
+            "category": "Tech"
+        },
+        {
+            "text": "Code is like humor. When you have to explain it, it's bad.",
+            "author": "Cory House",
+            "category": "Tech"
+        },
+        {
+            "text": "Life is living in the moment. The Present is a gift.",
+            "author": "ML",
+            "category": "Life"
+        },
+        {
+            "text": "Walk before you can run.",
+            "author": "ML",
+            "category": "Wisdom"
+        },
+        {
+            "text": "Hello i am a test quote here to use a boat",
+            "author": "funny bunny",
+            "category": "Funny"
+        },
+        {
+            "text": "The only way to do great work is to love what you do.",
+            "author": "Steve Jobs",
+            "category": "Success"
+        },
+        {
+            "text": "It's not about ideas. It's about making ideas happen.",
+            "author": "Scott Belsky",
+            "category": "Success"
+        },
+        {
+            "text": "The greatest glory in living lies not in never falling, but in rising every time we fall.",
+            "author": "Nelson Mandela",
+            "category": "Motivation"
+        },
+        {
+            "text": "The way to get started is to quit talking and begin doing.",
+            "author": "Walt Disney",
+            "category": "Motivation"
+        },
+        {
+            "text": "Life is what happens when you're busy making other plans.",
+            "author": "John Lennon",
+            "category": "Life"
+        },
+        {
+            "text": "Whoever is happy will make others happy too.",
+            "author": "Anne Frank",
+            "category": "Life"
+        },
+        {
+            "text": "Do not go where the path may lead, go instead where there is no path and leave a trail.",
+            "author": "Ralph Waldo Emerson",
+            "category": "Success"
+        },
+        {
+            "text": "Debugging is twice as hard as writing the code in the first place. Therefore, if you write the code as cleverly as possible, you are, by definition, not smart enough to debug it.",
+            "author": "Brian Kernighan",
+            "category": "Tech"
+        },
+        {
+            "text": "Always code as if the guy who ends up maintaining your code will be a violent psychopath who knows where you live.",
+            "author": "Martin Golding",
+            "category": "Tech"
+        },
+        {
+            "text": "Any fool can write code that a computer can understand. Good programmers write code that humans can understand.",
+            "author": "Martin Fowler",
+            "category": "Tech"
+        },
+        {
+            "text": "I have no special talent. I am only passionately curious.",
+            "author": "Albert Einstein",
+            "category": "Wisdom"
+        },
+        {
+            "text": "If you can't explain it simply, you don't understand it well enough.",
+            "author": "Albert Einstein",
+            "category": "Wisdom"
+        },
+        {
+            "text": "Yesterday's home runs don't win today's games.",
+            "author": "Babe Ruth",
+            "category": "Success",
+            "ratings": [
+                5
+            ],
+            "rating": 5.0
+        },
+        {
+            "text": "I didn't fail the test. I just found 100 ways to do it wrong.",
+            "author": "Benjamin Franklin",
+            "category": "Funny",
+            "ratings": [
+                1
+            ],
+            "rating": 1.0
+        },
+        {
+            "text": "Why do they call it rush hour when nothing moves?",
+            "author": "Robin Williams",
+            "category": "Funny"
+        }
+    ]
+}

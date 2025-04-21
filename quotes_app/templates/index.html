@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+
+{% block title %}Inspirational Quotes{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h1>Inspirational Quotes</h1>
+    
+    <div class="filter-section">
+        <form method="GET" action="{{ url_for('main.home') }}">
+            <label for="category_filter">Filter by Category:</label>
+            <select id="category_filter" name="category" onchange="this.form.submit()">
+                <option value="all" {% if selected_category == 'all' %}selected{% endif %}>All Categories</option>
+                {% for category in categories %}
+                    <option value="{{ category }}" {% if selected_category == category %}selected{% endif %}>{{ category }}</option>
+                {% endfor %}
+            </select>
+        </form>
+    </div>
+    
+    <div class="quote-box">
+        <blockquote>
+            <p>{{ myquotes.text }}</p>
+            <footer>— <cite>{{ myquotes.author }}</cite></footer>
+            <div class="quote-category">Category: {{ myquotes.category }}</div>
+        </blockquote>
+    </div>
+    
+    <div class="actions">
+        <a href="{{ url_for('main.home', category=selected_category) }}" class="button">New Quote</a>
+        <a href="{{ url_for('main.add_quote') }}" class="button">Add Quote</a>
+    </div>
+</div>
+
+<script src="{{ url_for('static', filename='js/quotes.js') }}"></script>
+{% endblock %}
